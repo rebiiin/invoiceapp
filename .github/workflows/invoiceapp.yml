@@ -44,7 +44,9 @@ jobs:
         key: ${{ secrets.VM_SSH_KEY }}
         port: ${{ secrets.VM_SSH_PORT }}
         script: |
-          mkdir -p /var/www/invoice-go-app
+         mkdir -p /var/www/invoice-go-app
           scp -r build/* ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}:/var/www/invoice-go-app
           cd /var/www/invoice-go-app
+          ls -la  # Add this line to check the content of the directory
+          chmod +x ./invoiceapp.exe
           ./invoiceapp.exe
