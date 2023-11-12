@@ -40,11 +40,12 @@ jobs:
     - name: Deploy to Ubuntu VM
       uses: appleboy/ssh-action@master
       with:
+        package: build/
         host: ${{ secrets.VM_HOST }}
         username: ${{ secrets.VM_USERNAME }}
         key: ${{ secrets.VM_SSH_KEY }}
         port: ${{ secrets.VM_SSH_PORT }}
-        package: build/
+        
 
     
   
