@@ -25,7 +25,7 @@ jobs:
       run: go mod download
 
     - name: Build
-      run: go build -o app
+      run: go build -o build/invoiceapp.exe -v
 
     - name: Create .env file
       run: |
@@ -36,7 +36,6 @@ jobs:
         echo "DBPORT=${{ secrets.DBPORT }}" >> .env
         echo "DBNAME=${{ secrets.DBNAME }}" >> .env
 
-   
     - name: Deploy to Ubuntu VM
       uses: appleboy/ssh-action@master
       with:
@@ -45,14 +44,7 @@ jobs:
         key: ${{ secrets.VM_SSH_KEY }}
         port: ${{ secrets.VM_SSH_PORT }}
         script: |
-          echo "Checking SSH connection..."
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }} "echo SSH connection successful"
-  
-          echo "Copying files to remote host..."
-          scp -v -o StrictHostKeyChecking=no -r . ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}:/path/to/remote/directory
-  
-          echo "Executing remote commands..."
-          ssh -v -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }} "cd /path/to/remote/directory && ./app"
-
-
-  
+          mkdir -p /var/www/invoice-go-app
+          scp -r build/* ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}:/var/www/invoice-go-app
+          cd /var/www/invoice-go-app
+          ./invoiceapp.exe
