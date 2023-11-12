@@ -39,7 +39,7 @@ jobs:
     - name: Deploy to Ubuntu VM
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.VMHOST }}
+        host: ${{ secrets.VM_HOST }}
         username: ${{ secrets.VMUSERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.VMSSHPORT }}
