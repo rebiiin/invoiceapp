@@ -30,7 +30,7 @@ func (j Jwt) CreateToken(user models.User) (models.Token, error) {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
 	jwt := models.Token{}
 
-	jwt.AccessToken, err = token.SignedString([]byte(os.Getenv("SECRET_KEY")))
+	jwt.AccessToken, err = token.SignedString([]byte(os.Getenv("SECRETKEY")))
 	if err != nil {
 		return jwt, err
 	}
@@ -45,7 +45,7 @@ func (Jwt) ValidateToken(accessToken string) (models.User, error) {
 			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return []byte(os.Getenv("SECRET_KEY")), nil
+		return []byte(os.Getenv("SECRETKEY")), nil
 	})
 
 	user := models.User{}
@@ -68,7 +68,7 @@ func (Jwt) ValidateToken(accessToken string) (models.User, error) {
 
 func (Jwt) ValidateRefreshToken(model models.Token) (models.User, error) {
 	sha1 := sha1.New()
-	io.WriteString(sha1, os.Getenv("SECRET_KEY"))
+	io.WriteString(sha1, os.Getenv("SECRETKEY"))
 
 	user := models.User{}
 	salt := string(sha1.Sum(nil))[0:16]
@@ -122,7 +122,7 @@ func (Jwt) ValidateRefreshToken(model models.Token) (models.User, error) {
 
 func (Jwt) createRefreshToken(token models.Token) (models.Token, error) {
 	sha1 := sha1.New()
-	io.WriteString(sha1, os.Getenv("SECRET_KEY"))
+	io.WriteString(sha1, os.Getenv("SECRETKEY"))
 
 	salt := string(sha1.Sum(nil))[0:16]
 	block, err := aes.NewCipher([]byte(salt))

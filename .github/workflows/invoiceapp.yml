@@ -1,0 +1,55 @@
+name: Build Go app and push to Azure
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+
+  build:
+    runs-on: windows-latest
+
+    env:
+      SECRETKEY: ${{ secrets.SECRETKEY }}
+      DBUSER: ${{ secrets.DBUSER }}
+      DBPASSWORD: ${{ secrets.DBPASSWORD }}
+      DBHOST: ${{ secrets.DBHOST }}
+      DBPORT: ${{ secrets.DBPORT }}
+      DBNAME: ${{ secrets.DBNAME }}
+
+
+    steps:
+    - uses: actions/checkout@v3
+
+    - name: Set up Go lang
+      uses: actions/setup-go@v3
+      with:
+        go-version: 21.4
+
+    - name: Copy static template files
+      run: xcopy /i templates build\templates
+
+    - name: Copy static public files
+      run: xcopy /i public build\public
+
+    - name: Build
+      run: go build -o build/invoiceapp.exe -v
+
+    - name: Deploy to Azure
+      uses: Azure/webapps-deploy@v2
+      with:
+        # Name of the Azure Web App
+        app-name: golang-webapptest
+        # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
+        package: build/
+        publish-profile: ${{ secrets.WEBAPPPUBLISHPDATA }}
+
+
+
+
+
+
+
+
