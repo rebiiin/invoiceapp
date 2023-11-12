@@ -41,7 +41,7 @@ jobs:
       with:
         host: ${{ secrets.VMHOST }}
         username: ${{ secrets.VMUSERNAME }}
-        key: ${{ secrets.VMSSHKEY }}
+        key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.VMSSHPORT }}
         script: |
           scp -o StrictHostKeyChecking=no -r . ${{ secrets.VMUSERNAME }}@${{ secrets.VMHOST }}:/path/to/remote/directory
