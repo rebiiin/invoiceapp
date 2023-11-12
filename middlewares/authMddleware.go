@@ -11,6 +11,7 @@ import (
 func AuthJwt() gin.HandlerFunc {
 
 	return func(c *gin.Context) {
+
 		bearerToken := c.GetHeader("Authorization")
 
 		cleanedToken := strings.TrimPrefix(bearerToken, "Bearer ")
