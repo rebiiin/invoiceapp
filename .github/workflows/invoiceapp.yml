@@ -36,6 +36,7 @@ jobs:
         echo "DBPORT=${{ secrets.DBPORT }}" >> .env
         echo "DBNAME=${{ secrets.DBNAME }}" >> .env
 
+   
     - name: Deploy to Ubuntu VM
       uses: appleboy/ssh-action@master
       with:
@@ -43,10 +44,10 @@ jobs:
         username: ${{ secrets.VM_USERNAME }}
         key: ${{ secrets.VM_SSH_KEY }}
         port: ${{ secrets.VM_SSH_PORT }}
-        script: |
-         mkdir -p /var/www/invoice-go-app
-          scp -r build/* ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}:/var/www/invoice-go-app
-          cd /var/www/invoice-go-app
-          ls -la  # Add this line to check the content of the directory
-          chmod +x ./invoiceapp.exe
-          ./invoiceapp.exe
+        source: "build"
+        target: "/var/www/invoice-go-app"
+
+    
+  
+ 
+  
