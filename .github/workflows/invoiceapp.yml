@@ -1,50 +1,48 @@
-name: Build Go app and push to Azure
+name: Go App CI/CD
 
 on:
   push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
-
   build:
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
 
     env:
-      SECRETKEY: ${{ secrets.SECRETKEY }}
-      DBUSER: ${{ secrets.DBUSER }}
-      DBPASSWORD: ${{ secrets.DBPASSWORD }}
-      DBHOST: ${{ secrets.DBHOST }}
-      DBPORT: ${{ secrets.DBPORT }}
-      DBNAME: ${{ secrets.DBNAME }}
-
+      GO111MODULE: on
 
     steps:
-    - uses: actions/checkout@v3
+    - name: Checkout Repository
+      uses: actions/checkout@v4
 
-    - name: Set up Go lang
+    - name: Set up Go
       uses: actions/setup-go@v4
       with:
-        go-version: 1.19
+        go-version: 1.21
 
+    - name: Install Dependencies
+      run: go mod download
 
     - name: Build
-      run: go build -o build/invoiceapp.exe -v
+      run: go build -o app
 
-    - name: Deploy to Azure
-      uses: Azure/webapps-deploy@v2
+    - name: Create .env file
+      run: |
+        echo "SECRETKEY=${{ secrets.SECRETKEY }}" > .env
+        echo "DBUSER=${{ secrets.DBUSER }}" >> .env
+        echo "DBPASSWORD=${{ secrets.DBPASSWORD }}" >> .env
+        echo "DBHOST=${{ secrets.DBHOST }}" >> .env
+        echo "DBPORT=${{ secrets.DBPORT }}" >> .env
+        echo "DBNAME=${{ secrets.DBNAME }}" >> .env
+
+    - name: Deploy to Ubuntu VM
+      uses: appleboy/ssh-action@master
       with:
-        # Name of the Azure Web App
-        app-name: golang-webapptest
-        # Applies to Web App only: Path to package or folder. *.zip, *.war, *.jar or a folder to deploy
-        package: build/
-        publish-profile: ${{ secrets.WEBAPPPUBLISHPDATA }}
-
-
-
-
-
-
-
-
+        host: ${{ secrets.VMHOST }}
+        username: ${{ secrets.VMUSERNAME }}
+        key: ${{ secrets.VMSSHKEY }}
+        port: ${{ secrets.VMSSHPORT }}
+        script: |
+          scp -o StrictHostKeyChecking=no -r . ${{ secrets.VMUSERNAME }}@${{ secrets.VMHOST }}:/path/to/remote/directory
+          ssh -o StrictHostKeyChecking=no ${{ secrets.VMUSERNAME }}@${{ secrets.VMHOST }} "cd /path/to/remote/directory && ./app"
