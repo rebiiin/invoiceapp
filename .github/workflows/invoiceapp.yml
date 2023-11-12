@@ -36,13 +36,21 @@ jobs:
         echo "DBPORT=${{ secrets.DBPORT }}" >> .env
         echo "DBNAME=${{ secrets.DBNAME }}" >> .env
 
+   
     - name: Deploy to Ubuntu VM
-      uses: appleboy/ssh-action@master
+      uses: appleboy/ssh-action@main
       with:
         host: ${{ secrets.VM_HOST }}
-        username: ${{ secrets.VMUSERNAME }}
-        key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.VMSSHPORT }}
+        username: ${{ secrets.VM_USERNAME }}
+        key: ${{ secrets.VM_SSH_KEY }}
+        port: ${{ secrets.VM_SSH_PORT }}
         script: |
-          scp -o StrictHostKeyChecking=no -r . ${{ secrets.VMUSERNAME }}@${{ secrets.VMHOST }}:/path/to/remote/directory
-          ssh -o StrictHostKeyChecking=no ${{ secrets.VMUSERNAME }}@${{ secrets.VMHOST }} "cd /path/to/remote/directory && ./app"
+          echo "Checking SSH connection..."
+          ssh -v -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }} "echo SSH connection successful"
+  
+          echo "Copying files to remote host..."
+          scp -v -o StrictHostKeyChecking=no -r . ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }}:/path/to/remote/directory
+  
+          echo "Executing remote commands..."
+          ssh -v -o StrictHostKeyChecking=no ${{ secrets.VM_USERNAME }}@${{ secrets.VM_HOST }} "cd /path/to/remote/directory && ./app"
+  
