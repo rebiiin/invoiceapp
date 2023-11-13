@@ -83,7 +83,7 @@ This YAML code defines a GitHub Actions workflow for Continuous Integration and 
 
 ### 5. Create .env file
    - **Name**: Create .env file
-   - **Purpose**: Creats a `.env` file with sensitive information (e.g., database credentials) sourced from GitHub Secrets.
+   - **Purpose**: Creates a `.env` file with sensitive information (e.g., database credentials) sourced from GitHub Secrets.
 
 ### 6. Copy output using scp
    - **Name**: Copy output via scp
@@ -121,7 +121,7 @@ List of the secrets stored in GitHub Actions Secrets:
 
 
   
-## MySQL Datbase DDL script of the backend database
+## MySQL Database DDL script of the backend database
 
 ```sql
 
