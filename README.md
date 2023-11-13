@@ -1,16 +1,15 @@
-name: Go App CI/CD
+
+```yml
+
+name: Go-App CI/CD
 
 on:
   push:
     branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      GO111MODULE: on
 
     steps:
     - name: Checkout Repository
@@ -55,9 +54,9 @@ jobs:
         port: ${{ secrets.VM_SSH_PORT }}
         script: ls
         
-
+```
     
-  # Go-App CI/CD Documentation
+ 
 
 ## Introduction
 This YAML code defines a GitHub Actions workflow for Continuous Integration and Continuous Deployment (CI/CD) of a Go application.
@@ -123,7 +122,7 @@ List of the secrets stored in GitHub Actions Secrets:
   
 ## MySQL Datbase DDL script of the backend database
 
-
+```sql
 
 CREATE DATABASE `dbinvoiceapp` 
 
@@ -212,3 +211,5 @@ CREATE TABLE `users` (
   UNIQUE KEY `email` (`email`),
   KEY `idx_users_deleted_at` (`deleted_at`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+```
