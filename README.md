@@ -114,7 +114,7 @@ List of the secrets stored in GitHub Actions Secrets:
 3. The files of the 'build/' folder are copied to a remote server using SCP.
 4. The Go app is deployed to an Ubuntu VM by initiating an SSH connection and executing deployment scripts.
 
- ## Backend database backend diagram
+ ## Backend database diagram
 
 
 ![Diagramdbinvoiceapp](https://github.com/rebiiin/invoiceapp/assets/3890058/e54f8155-9fe1-4978-80c1-8beddc9a21d8)
