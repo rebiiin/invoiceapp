@@ -121,7 +121,7 @@ List of the secrets stored in GitHub Actions Secrets:
 
 
   
-## MySQL Database DDL script of the backend database
+## MySQL database ddl script of the backend
 
 ```sql
 
