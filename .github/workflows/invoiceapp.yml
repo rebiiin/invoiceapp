@@ -25,7 +25,7 @@ jobs:
       run: go mod download
 
     - name: Build
-      run: go build -o build/invoiceapp.exe -v
+      run: GOOS=linux go build -o build/invoiceapp -v
  
     - name: Create .env file
       run: |
