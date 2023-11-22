@@ -1,62 +1,60 @@
 name: Go App CI/CD
-
-on:
+'on':
   push:
     branches:
       - main
-
 jobs:
   build:
     runs-on: ubuntu-latest
-
-    env:
-      GO111MODULE: on
-
     steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v4
+      
+      - name: Checkout Repository
+        uses: actions/checkout@v4
 
-    - name: Set up Go
-      uses: actions/setup-go@v4
-      with:
-        go-version: 1.21
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+          check-latest: true
+      - run: go version
 
-    - name: Install Dependencies
-      run: go mod download
+      - name: Install Dependencies
+        run: go mod download
 
-    - name: Build
-      run: GOOS=linux go build -o build/invoiceapp -v
- 
-    - name: Create .env file
-      run: |
-        echo "SECRETKEY=${{ secrets.SECRETKEY }}" > .env
-        echo "DBUSER=${{ secrets.DBUSER }}" >> .env
-        echo "DBPASSWORD=${{ secrets.DBPASSWORD }}" >> .env
-        echo "DBHOST=${{ secrets.DBHOST }}" >> .env
-        echo "DBPORT=${{ secrets.DBPORT }}" >> .env
-        echo "DBNAME=${{ secrets.DBNAME }}" >> .env
-         
-    - name: Copy output via scp
-      uses: appleboy/scp-action@master
-      with:
-        host: ${{ secrets.VM_HOST }}
-        username: ${{ secrets.VM_USERNAME }}
-        key: ${{ secrets.VM_SSH_KEY }}
-        port: ${{ secrets.VM_SSH_PORT }}
-        source: "build/"
-        target: "/var/www/invoice-go-app"
+      - name: Build
+        run: GOOS=linux go build -o build/invoiceapp -v
 
-    - name: Deploy to Ubuntu VM
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.VM_HOST }}
-        username: ${{ secrets.VM_USERNAME }}
-        key: ${{ secrets.VM_SSH_KEY }}
-        port: ${{ secrets.VM_SSH_PORT }}
-        script: ls
+      - name: Debug build/ directory
+        run: ls -R build/
+
         
+      - name: Create the env file
+        run: |
+          echo "SECRETKEY=${{ secrets.SECRETKEY }}" >> build/.env
+          echo "DBUSER=${{ secrets.DBUSER }}" >> build/.env
+          echo "DBPASSWORD=${{ secrets.DBPASSWORD }}" >> build/.env
+          echo "DBHOST=${{ secrets.DBHOST }}" >> build/.env
+          echo "DBPORT=${{ secrets.DBPORT }}" >> build/.env
+          echo "DBNAME=${{ secrets.DBNAME }}" >> build/.env
 
-    
-  
- 
-  
+      - name: Display env file
+        run: cat build/.env
+
+      - name: Copy output via scp
+        uses: appleboy/scp-action@master
+        with:
+          host: '${{ secrets.VM_HOST }}'
+          username: '${{ secrets.VM_USERNAME }}'
+          key: '${{ secrets.VM_SSH_KEY }}'
+          port: '${{ secrets.VM_SSH_PORT }}'
+          source: build/
+          target: /var/www/invoice-go-app
+
+      - name: Deploy to Ubuntu VM
+        uses: appleboy/ssh-action@master
+        with:
+          host: '${{ secrets.VM_HOST }}'
+          username: '${{ secrets.VM_USERNAME }}'
+          key: '${{ secrets.VM_SSH_KEY }}'
+          port: '${{ secrets.VM_SSH_PORT }}'
+          script: ls
