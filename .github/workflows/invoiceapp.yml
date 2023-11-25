@@ -1,5 +1,5 @@
 name: Go App CI/CD
-'on':
+on:
   push:
     branches:
       - main
